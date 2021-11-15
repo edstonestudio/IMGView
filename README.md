@@ -19,7 +19,7 @@ Additional versions and design styles
 ## Credits
 
 Carl Fyffe - https://twitter.com/sixty4bit<br>
-Edward Robirds - http://edwardrobirds.com
+Ed Stone - https://edstonestudio.com
 
 #### External Resources Used
 
