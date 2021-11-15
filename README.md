@@ -1,4 +1,4 @@
-# imgview
+# IMGView
 
 This is a simple and responsive PHP script that allows you to easily navigate between images like a slideshow.
 
