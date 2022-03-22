@@ -4,7 +4,7 @@ This is a simple and responsive PHP script that allows you to easily navigate be
 
 Best used for showcasing design concepts to clients, the script will show the file name as the page title and dynamically create a dropdown list of all of image files within the same directory, and make it easy for viewers to navigate between the images.
 
-![2017-08-30_10-03-54](https://user-images.githubusercontent.com/5123969/29877198-f524f940-8d6c-11e7-8a5c-658fde92ec16.png)
+<a href="https://imgview.com/" target="_blank"><strong>View Demo</strong></a>
 
 ## To Use
 
