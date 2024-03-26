@@ -1,4 +1,4 @@
-<?
+<?php
 
 function loadPics($pics)
 {
@@ -19,9 +19,9 @@ function loadPics($pics)
 
 function listPics($pics)
 {
-  while(list($num, $pic) = each($pics))
+  foreach($pics as $num => $pic)
   {
-    echo "<li><a href='".$PHP_SELF."?c=$num'>".getPicName($num, $pics)."</a></li>\n";
+    echo "<li><a href='".$_SERVER['PHP_SELF']."?c=$num'>".getPicName($num, $pics)."</a></li>\n";
   }
 }
 
@@ -92,12 +92,13 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
   <head>
     <meta charset="utf-8">
 
-    <title><?=getPicName($_REQUEST['c'], $pics)?></title>
+    <title><?php echo getPicName($_REQUEST['c'], $pics)?></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="icon" type="image/svg+xml" href="https://imgview.com/favicon.svg">
-    <link rel="icon" type="image/png" href="https://imgview.com/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
@@ -139,7 +140,7 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
 
     <style type="text/css">
     :root {
-      --base: #303d4b;
+      --base: #333;
       --link: rgba(246, 246, 243, 0.8);
       --semi-01: rgba(255,255,255,0.1);
       --semi-02: rgba(255,255,255,0.2);
@@ -149,10 +150,8 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
       --shadow: rgba(0,0,0,0.5);
       --hover: #f6f6f3;
       --white: #fff;
-      --tomato: #de4736;
-      --dark-tomato: #cb4131;
-      --tomato-rgb: 222,71,54;
-      --dark-tomato-rgb: 203,65,49;
+      --main: #555;
+      --dark-main: #222;
       }
     * {
       vertical-align: baseline;
@@ -169,27 +168,36 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
       transition: all 150ms ease-in-out;
     }
     ::selection {
-      background-color: var(--tomato);
+      background-color: var(--main);
       color: var(--white);
     }
     body {
       background: var(--base);
       color: var(--white);
       margin: 0 1rem 1rem 1rem;
-      font: 14px sans-serif;
+      font: 14px "Inter", sans-serif;
+      font-optical-sizing: auto;
       overflow-x: hidden;
-      min-height: 100vh;
     }
     img {
       max-width: 100%;
       height: auto;
     }
-    img:hover { filter: brightness(1.05); }
+    img:hover { filter: brightness(1.02); }
     a {
       color: var(--link);
       text-decoration: none;
     }
     a:hover { color: var(--hover); }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
 
     h1 {
       font-size: 1.25rem;
@@ -197,15 +205,19 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
       margin-left: 0.5rem;
     }
     h1, #select-nav { flex: 50%; }
-    p {
-      margin: 0 0 1rem 0;
+    h2, p {
+      margin: 0 0 2rem 0;
       line-height: 1.3;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: normal;
     }
 
     h1, #prev a, #next a, .image-dropdown { padding: 1rem; }
 
     #top-nav {
-      background: linear-gradient(180deg, rgba(var(--tomato-rgb),1) 0%, rgba(var(--dark-tomato-rgb),1) 100%);
+      background: var(--main);
       box-shadow: 0 0 15px var(--shadow);
       color: var(--white);
       display: flex;
@@ -214,6 +226,7 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
       border-radius: 0 0 5px 5px;
       position: relative;
       z-index: 4;
+      animation: fadeIn ease-in 150ms;
     }
     #select-nav {
       display: flex;
@@ -292,7 +305,7 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
     }
     .dropdown li:hover a {
       background: var(--white);
-      color: var(--tomato);
+      color: var(--main);
     }
     .image-dropdown.active {
       background: var(--base);
@@ -301,12 +314,16 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
     }
     .image-dropdown.active:after { border-color: var(--white); }
     .image-dropdown.active .dropdown { max-height: 400px; }
-
     #image-container {
       text-align: center;
       margin: 1rem auto;
       position: relative;
       z-index: 1;
+      animation: fadeIn ease-in 300ms;
+    }
+    #top-nav, #image-container {
+      opacity: 0;
+      animation-fill-mode: forwards;
     }
     #image a {
       display: inline-block;
@@ -315,21 +332,12 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
     img#image {
       box-shadow: 0 0 15px var(--shadow);
       display: inline-block;
-      border-radius: 5px;
+      border-radius: 6px;
       z-index: 2;
       position: relative;
-      cursor: zoom-in;
-      max-height: 80vh;
       width: auto;
     }
-    img#image.zoom {
-      cursor: zoom-out;
-      max-height: none;
-      width: auto;
-    }
-
     #footer {
-      font-size: 0.875rem;
       text-align: center;
       padding: 1rem;
       color: var(--semi-06);
@@ -404,46 +412,39 @@ if(!isset($_REQUEST['c'])) $_REQUEST['c'] = 0;
         max-width: 100%;
         cursor: default;
       }
-      #footer { font-size: 0.785rem; }
     }
     </style>
 
   </head>
 
-  <body class="c-<?=getNext($_REQUEST['c'], $pics)?>">
+  <body class="c-<?php echo getNext($_REQUEST['c'], $pics)?>">
 
     <div id="top-nav">
-      <h1><?=getPicName($_REQUEST['c'], $pics)?></h1>
+      <h1><?php echo getPicName($_REQUEST['c'], $pics)?></h1>
       <div id="select-nav">
-        <div id="prev"><a href="<?=$PHP_SELF?>?c=<?=getPrev($_REQUEST['c'], $pics)?>" title="Previous Image"><i class="fas fa-chevron-left"></i><span>PREV</span></a></div>
+        <div id="prev"><a href="<?php echo $_SERVER['PHP_SELF']?>?c=<?php echo getPrev($_REQUEST['c'], $pics)?>" title="Previous Image"><i class="fas fa-chevron-left"></i><span>PREV</span></a></div>
         <div id="image-select">
           <div id="dd" class="image-dropdown" tabindex="1">Select image ...
             <ul class="dropdown">
-              <? listPics($pics); ?>
+              <?php listPics($pics); ?>
             </ul>
           </div>
         </div>
-        <div id="next"><a href="<?=$PHP_SELF?>?c=<?=getNext($_REQUEST['c'], $pics)?>" title="Next Image"><span>NEXT</span><i class="fas fa-chevron-right"></i></a></div>
+        <div id="next"><a href="<?php echo $_SERVER['PHP_SELF']?>?c=<?php echo getNext($_REQUEST['c'], $pics)?>" title="Next Image"><span>NEXT</span><i class="fas fa-chevron-right"></i></a></div>
       </div>
     </div>
 
     <div id="image-container">
 
-      <!-- click to zoom into image for desktop only -->
-      <div class="mobile-hide"><? if(isset($_REQUEST['c'])) showPic($_REQUEST['c'], $pics); ?></div>
-
-      <!-- click to advance to next image action for mobile only -->
-      <div class="mobile-show"><a href="<?=$PHP_SELF?>?c=<?=getNext($_REQUEST['c'], $pics)?>"><? if(isset($_REQUEST['c'])) showPic($_REQUEST['c'], $pics); ?></a></div>
+      <div><a href="<?php echo $_SERVER['PHP_SELF']?>?c=<?php echo getNext($_REQUEST['c'], $pics)?>"><?php if(isset($_REQUEST['c'])) showPic($_REQUEST['c'], $pics); ?></a></div>
 
     </div>
 
     <div id="footer">
 
-      <p><a class="btn" href="<? srcOnly($_REQUEST['c'], $pics); ?>" download="<? srcOnly($_REQUEST['c'], $pics); ?>">Download Image<i class="fas fa-save"></i></a></p>
-      <p>Copyright &copy; <?=date('Y');?> <a href="#link" target="_blank">Your Name Here</a>.</p>
+      <h2>&quot; <?php echo getPicName($_REQUEST['c'], $pics)?> &quot;</h2>
 
-      <div id="github"><a href="https://github.com/edstonestudio/imgview" target="_blank" title="IMGview: A super-simple, drag-and-drop PHP script that allows you to easily navigate between images."><i class="fab fa-github"></i>Powered by IMGView</a></div>
-      <div id="imgview"><a href="https://imgview.com" target="_blank" title="IMGview: A super-simple, drag-and-drop PHP script that allows you to easily navigate between images."><img src="https://imgview.com/img/imgview.svg" alt="IMGview: A super-simple, drag-and-drop PHP script that allows you to easily navigate between images."></a></div>
+      <p><a class="btn" href="<?php srcOnly($_REQUEST['c'], $pics); ?>" download="<?php srcOnly($_REQUEST['c'], $pics); ?>">Download Image<i class="fas fa-save"></i></a></p>
 
     </div>
 
